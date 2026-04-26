@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://microsoft.github.io/vscode-codicons/dist/codicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+    <script src="https://unpkg.com/monaco-editor@0.45.0/min/vs/loader.js"></script>
+</head>
+<body>
+    <div class="vscode-app">
+        <header class="title-bar">
+            <div class="title-bar-menu">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg" alt="VS Code Logo" class="vscode-icon">
+                <div class="menu-item" id="menu-file">File</div>
+                <div class="menu-item" id="menu-edit">Edit</div>
+                <div class="menu-item" id="menu-selection">Selection</div>
+                <div class="menu-item" id="menu-view">View</div>
+                <div class="menu-item" id="menu-go">Go</div>
+                <div class="menu-item" id="menu-run">Run</div>
+                <div class="menu-item" id="menu-terminal">Terminal</div>
+                <div class="menu-item" id="menu-help">Help</div>
+            </div>
+            <div class="title-bar-title">Visual Studio Code</div>
+        </header>
+
+        <div class="workbench">
+            <nav class="activity-bar">
+                <div class="activity-top">
+                    <div class="activity-icon active" data-panel="explorer" title="Explorer">
+                        <i class="codicon codicon-files"></i>
+                    </div>
+                    <div class="activity-icon" data-panel="search" title="Search">
+                        <i class="codicon codicon-search"></i>
+                    </div>
+                    <div class="activity-icon" data-panel="source-control" title="Source Control">
+                        <i class="codicon codicon-source-control"></i>
+                    </div>
+                    <div class="activity-icon" data-panel="run-debug" title="Run and Debug">
+                        <i class="codicon codicon-debug-alt"></i>
+                    </div>
+                    <div class="activity-icon" data-panel="extensions" title="Extensions">
+                        <i class="codicon codicon-extensions"></i>
+                    </div>
+                </div>
+                <div class="activity-bottom">
+                    <div class="activity-icon" title="Accounts">
+                        <i class="codicon codicon-account"></i>
+                    </div>
+                    <div class="activity-icon" title="Manage" id="manage-menu-btn">
+                        <i class="codicon codicon-settings-gear"></i>
+                    </div>
+                </div>
+            </nav>
+
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <span id="sidebar-title">EXPLORER</span>
+                    <div class="sidebar-actions">
+                        <i class="fa-solid fa-ellipsis"></i>
+                    </div>
+                </div>
+                <div class="sidebar-content" id="sidebar-content">
+                </div>
+            </aside>
+
+            <div class="resizer vertical-resizer" id="sidebar-resizer"></div>
+
+            <main class="main-split">
+                <section class="editor-area">
+                    <div class="editor-tabs" id="editor-tabs">
+                    </div>
+                    <div class="editor-content">
+                        <div id="welcome-screen" class="welcome-screen" style="display: none;">
+                            <div class="welcome-container">
+                                <h1>Visual Studio Code</h1>
+                                <h2>Editing evolved</h2>
+                                <div class="welcome-section">
+                                    <h3>Start</h3>
+                                    <ul class="welcome-list">
+                                        <li id="welcome-new-file"><i class="codicon codicon-new-file"></i> New File...</li>
+                                        <li id="welcome-open-file"><i class="codicon codicon-go-to-file"></i> Open File...</li>
+                                        <li id="welcome-open-folder"><i class="codicon codicon-folder-opened"></i> Open Folder...</li>
+                                        <li id="welcome-open-repo"><i class="codicon codicon-source-control"></i> Open Repository...</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="editor"></div>
+                    </div>
+                </section>
+
+                <div class="resizer horizontal-resizer" id="panel-resizer"></div>
+
+                <section class="bottom-panel" id="bottom-panel">
+                    <div class="panel-header">
+                        <div class="panel-tabs">
+                            <div class="panel-tab">PROBLEMS</div>
+                            <div class="panel-tab">OUTPUT</div>
+                            <div class="panel-tab">DEBUG CONSOLE</div>
+                            <div class="panel-tab active">TERMINAL</div>
+                            <div class="panel-tab">PORTS</div>
+                        </div>
+                        <div class="panel-actions">
+                            <i class="fa-solid fa-plus"></i>
+                            <i class="fa-solid fa-trash-can"></i>
+                            <i class="fa-solid fa-xmark" id="close-panel-btn"></i>
+                        </div>
+                    </div>
+                    <div class="panel-content" id="terminal-content" style="padding: 0; overflow: hidden; background: #000;">
+                        <div id="terminal-container" style="width: 100%; height: 100%; padding-left: 10px; padding-top: 5px;"></div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <footer class="status-bar">
+            <div class="status-left">
+                <div class="status-item"><i class="fa-solid fa-code-branch"></i> main</div>
+                <div class="status-item"><i class="fa-solid fa-arrows-rotate"></i></div>
+                <div class="status-item"><i class="fa-solid fa-circle-xmark"></i> 0 <i class="fa-solid fa-triangle-exclamation"></i> 0</div>
+            </div>
+            <div class="status-right">
+                <div class="status-item" id="status-line-col">Ln 1, Col 1</div>
+                <div class="status-item">Spaces: 4</div>
+                <div class="status-item">UTF-8</div>
+                <div class="status-item">CRLF</div>
+                <div class="status-item" id="status-language">Plain Text</div>
+                <div class="status-item"><i class="fa-regular fa-bell"></i></div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Command Palette -->
+    <div id="command-palette-overlay" class="command-palette-overlay" style="display: none;">
+        <div class="command-palette">
+            <input type="text" id="command-palette-input" placeholder="Type a command..." autocomplete="off">
+            <div id="command-palette-list" class="command-palette-list"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
